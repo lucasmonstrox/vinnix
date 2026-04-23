@@ -1,0 +1,33 @@
+name: Fallow Audit
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  audit:
+    name: Audit changed files
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.2.20
+
+      - name: Install deps
+        run: bun install --frozen-lockfile
+
+      - name: Fallow audit
+        run: >
+          bunx fallow@2.47.0 audit
+          --changed-since origin/${{ github.base_ref }}
+          --dead-code-baseline .fallow/dead-code.json
+          --format annotations

@@ -1,0 +1,33 @@
+{
+  "unused_files": [],
+  "unused_exports": [],
+  "unused_types": [],
+  "unused_dependencies": [
+    "lucide-react",
+    "lucide-react",
+    "next-themes",
+    "shadcn",
+    "zod"
+  ],
+  "unused_dev_dependencies": [
+    "@typescript-eslint/eslint-plugin",
+    "@typescript-eslint/parser",
+    "@turbo/gen"
+  ],
+  "circular_dependencies": [],
+  "unused_optional_dependencies": [],
+  "unused_enum_members": [],
+  "unused_class_members": [],
+  "unresolved_imports": [
+    "apps/web/next-env.d.ts:./.next/dev/types/routes.d.ts",
+    "packages/ui/src/styles/globals.css:./shadcn/tailwind.css"
+  ],
+  "unlisted_dependencies": [
+    "postcss-load-config"
+  ],
+  "duplicate_exports": [],
+  "type_only_dependencies": [],
+  "test_only_dependencies": [],
+  "boundary_violations": [],
+  "stale_suppressions": []
+}

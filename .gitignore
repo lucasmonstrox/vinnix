@@ -38,5 +38,6 @@ npm-debug.log*
 # Claude Code — personal overrides
 .claude/settings.local.json
 
-# Fallow — local analysis cache
-.fallow/
+# Fallow — local analysis cache (baselines in .fallow/*.json are committed)
+.fallow/*
+!.fallow/*.json
