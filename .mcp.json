@@ -1,0 +1,32 @@
+{
+  "mcpServers": {
+    "gitnexus": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "gitnexus@latest", "mcp"]
+    },
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": {
+        "Authorization": "Bearer ${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      }
+    },
+    "npm": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@pinkpixel/npm-helper-mcp"]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest",
+        "--config", "./playwright-mcp.config.json",
+        "--output-dir", "./playwright",
+        "--output-mode", "file"
+      ]
+    },
+    "shadcn": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@jpisnice/shadcn-ui-mcp-server"]
+    }
+  }
+}

@@ -20,9 +20,9 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", fontMono.variable, "font-sans", geist.variable)}
+      className={cn("p-4 antialiased m-0 flex", fontMono.variable, "font-sans", geist.variable)}
     >
-      <body>
+      <body className="flex min-h-screen bg-white p-2">
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

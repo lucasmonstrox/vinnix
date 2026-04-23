@@ -1,0 +1,10 @@
+{
+  "browser": {
+    "browserName": "chromium",
+    "contextOptions": {
+      "recordVideo": {
+        "dir": "./playwright/videos"
+      }
+    }
+  }
+}

@@ -3,6 +3,7 @@ import pluginNext from "@next/eslint-plugin-next"
 import eslintConfigPrettier from "eslint-config-prettier"
 import pluginReact from "eslint-plugin-react"
 import pluginReactHooks from "eslint-plugin-react-hooks"
+import pluginTailwind from "eslint-plugin-tailwindcss"
 import globals from "globals"
 import tseslint from "typescript-eslint"
 
@@ -46,6 +47,14 @@ export const nextJsConfig = [
       // React scope no longer necessary with new JSX transform.
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
+    },
+  },
+  ...pluginTailwind.configs["flat/recommended"],
+  {
+    rules: {
+      // Tailwind v4 uses CSS @theme, which this plugin cannot parse.
+      // Disable custom-classname check to avoid false positives on shadcn utilities.
+      "tailwindcss/no-custom-classname": "off",
     },
   },
 ]
