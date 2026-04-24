@@ -1,7 +1,7 @@
 "use client"
 
-import * as React from "react"
 import { useTheme } from "next-themes"
+import * as React from "react"
 
 const TYPING_TAGS = new Set(["INPUT", "TEXTAREA", "SELECT"])
 
