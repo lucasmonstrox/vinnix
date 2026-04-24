@@ -1,11 +1,20 @@
+import path from "node:path"
+import { fileURLToPath } from "node:url"
+
 import js from "@eslint/js"
-import eslintConfigPrettier from "eslint-config-prettier"
+import pluginTailwind from "eslint-plugin-better-tailwindcss"
 import pluginReact from "eslint-plugin-react"
 import pluginReactHooks from "eslint-plugin-react-hooks"
 import globals from "globals"
 import tseslint from "typescript-eslint"
 
 import { config as baseConfig } from "./base.js"
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const tailwindEntryPoint = path.resolve(
+  __dirname,
+  "../ui/src/styles/globals.css"
+)
 
 /**
  * A custom ESLint configuration for libraries that use React.
@@ -14,7 +23,6 @@ import { config as baseConfig } from "./base.js"
 export const config = [
   ...baseConfig,
   js.configs.recommended,
-  eslintConfigPrettier,
   ...tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
   {
@@ -37,6 +45,23 @@ export const config = [
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
       "react/no-multi-comp": ["error", { ignoreStateless: false }],
+    },
+  },
+  {
+    plugins: {
+      "better-tailwindcss": pluginTailwind,
+    },
+    settings: {
+      "better-tailwindcss": {
+        entryPoint: tailwindEntryPoint,
+      },
+    },
+    rules: {
+      ...pluginTailwind.configs["recommended-error"].rules,
+      "better-tailwindcss/enforce-consistent-line-wrapping": [
+        "error",
+        { printWidth: 80 },
+      ],
     },
   },
 ]

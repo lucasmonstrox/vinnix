@@ -48,7 +48,19 @@ Active rules worth knowing before touching code:
 
 - `complexity` max 10 (cyclomatic).
 - `sonarjs/cognitive-complexity` max 15.
-- Full `sonarjs`, `security`, `security-node`, `no-unsanitized` recommended sets.
+- `@typescript-eslint/max-params` max 2 (Clean Code — use options object for 3+).
+- `no-console` with `allow: ["warn","error"]` — `console.log/info/debug/table` blocked.
+- `eqeqeq: "always"` — always `===`/`!==`.
+- `no-nested-ternary` — refactor nested ternaries into `if/else` or helpers.
+- `no-param-reassign` with `{ props: true }` — no reassign and no property mutation of parameters; spread into a new const.
+- `no-debugger`, `prefer-const`, `no-var` via `@eslint/js` + `typescript-eslint` recommended.
+- Full `sonarjs`, `security`, `security-node`, `no-unsanitized`, `regexp` (`flat/recommended`) sets — `regexp` covers ReDoS (`no-super-linear-backtracking`) and autofixes `prefer-d`/`prefer-w`/`better-regex` silently.
+- `check-file/filename-naming-convention` — all `**/*.{ts,tsx,js,jsx}` must be `KEBAB_CASE`; `ignoreMiddleExtensions: true` allows `.d.ts`, `.stories.tsx`, `.test.ts`, etc.
+- `no-secrets/no-secrets` with `tolerance: 4.2` — blocks high-entropy strings and known provider patterns (AWS, Stripe). GitHub PAT gaps are covered by Gitleaks at commit/CI.
+- `@stylistic/max-len` at 80 — strings/templates/comments count; URLs and regex literals are ignored.
+- `better-tailwindcss/enforce-consistent-line-wrapping` at 80 — auto-fixes long `className="..."` strings by inserting newlines inside the attribute value (JSX treats whitespace as a class separator). Preferred over wrapping in `cn()` for pure Tailwind strings — zero runtime cost and no import.
+- `better-tailwindcss/enforce-consistent-class-order` + `enforce-canonical-classes` enforce Tailwind v4 class ordering and canonical shorthands (e.g. `text-sm leading-loose` → `text-sm/loose`). Settings point `entryPoint` to `packages/ui/src/styles/globals.css` via absolute path.
+- `max-lines-per-function: 60` (blanks and comments skipped).
 - `turbo/no-undeclared-env-vars` — add env vars to `turbo.json` `env`/`globalEnv` before reading from `process.env` in workspace code.
 
 The **Stop hook** (`.claude/hooks/fallow-audit.sh`, async rewake) runs Fallow against `.fallow/dead-code.json` at end of turn and surfaces newly-introduced dead code in changed files. Regenerate the baseline with `bunx fallow dead-code --save-baseline .fallow/dead-code.json` only when an intentional API shape change makes prior baseline stale.

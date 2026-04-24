@@ -1,13 +1,19 @@
-import js from "@eslint/js"
+import path from "node:path"
+import { fileURLToPath } from "node:url"
+
 import pluginNext from "@next/eslint-plugin-next"
-import eslintConfigPrettier from "eslint-config-prettier"
+import pluginTailwind from "eslint-plugin-better-tailwindcss"
 import pluginReact from "eslint-plugin-react"
 import pluginReactHooks from "eslint-plugin-react-hooks"
-import pluginTailwind from "eslint-plugin-tailwindcss"
 import globals from "globals"
-import tseslint from "typescript-eslint"
 
 import { config as baseConfig } from "./base.js"
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const tailwindEntryPoint = path.resolve(
+  __dirname,
+  "../ui/src/styles/globals.css"
+)
 
 /**
  * A custom ESLint configuration for libraries that use Next.js.
@@ -16,9 +22,6 @@ import { config as baseConfig } from "./base.js"
  * */
 export const nextJsConfig = [
   ...baseConfig,
-  js.configs.recommended,
-  eslintConfigPrettier,
-  ...tseslint.configs.recommended,
   {
     ...pluginReact.configs.flat.recommended,
     languageOptions: {
@@ -50,12 +53,21 @@ export const nextJsConfig = [
       "react/no-multi-comp": ["error", { ignoreStateless: false }],
     },
   },
-  ...pluginTailwind.configs["flat/recommended"],
   {
+    plugins: {
+      "better-tailwindcss": pluginTailwind,
+    },
+    settings: {
+      "better-tailwindcss": {
+        entryPoint: tailwindEntryPoint,
+      },
+    },
     rules: {
-      // Tailwind v4 uses CSS @theme, which this plugin cannot parse.
-      // Disable custom-classname check to avoid false positives on shadcn utilities.
-      "tailwindcss/no-custom-classname": "off",
+      ...pluginTailwind.configs["recommended-error"].rules,
+      "better-tailwindcss/enforce-consistent-line-wrapping": [
+        "error",
+        { printWidth: 80 },
+      ],
     },
   },
 ]
