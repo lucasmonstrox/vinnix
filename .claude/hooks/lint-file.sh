@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# PostToolUse hook: ESLint --fix on the edited file.
+# PostToolUse hook: Prettier --write then ESLint --fix on the edited file.
 # Reads hook JSON on stdin, extracts file_path, walks up to nearest
-# eslint.config.* and runs eslint from that directory.
+# eslint.config.* and runs prettier + eslint from that directory.
 
 f=$(jq -r '.tool_input.file_path // .tool_response.filePath // empty' | tr -d '\r')
 [ -n "$f" ] || exit 0
@@ -18,6 +18,7 @@ dir="$abs"
 while [ -n "$dir" ] && [ "$dir" != "/" ]; do
   for c in eslint.config.js eslint.config.mjs eslint.config.cjs eslint.config.ts; do
     if [ -f "$dir/$c" ]; then
+      (cd "$dir" && bunx prettier --write --log-level=error "$f") >/dev/null 2>&1
       (cd "$dir" && bunx eslint --fix "$f") >/dev/null 2>&1
       remaining=$(cd "$dir" && bunx eslint --max-warnings 0 "$f" 2>&1)
       rc=$?
