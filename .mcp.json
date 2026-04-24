@@ -1,5 +1,9 @@
 {
   "mcpServers": {
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest"]
+    },
     "gitnexus": {
       "command": "cmd",
       "args": ["/c", "npx", "-y", "gitnexus@latest", "mcp"]
@@ -14,15 +18,6 @@
     "npm": {
       "command": "cmd",
       "args": ["/c", "npx", "-y", "@pinkpixel/npm-helper-mcp"]
-    },
-    "playwright": {
-      "command": "npx",
-      "args": [
-        "@playwright/mcp@latest",
-        "--config", "./playwright-mcp.config.json",
-        "--output-dir", "./playwright",
-        "--output-mode", "file"
-      ]
     },
     "shadcn": {
       "command": "cmd",
