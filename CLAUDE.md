@@ -53,6 +53,16 @@ Active rules worth knowing before touching code:
 
 The **Stop hook** (`.claude/hooks/fallow-audit.sh`, async rewake) runs Fallow against `.fallow/dead-code.json` at end of turn and surfaces newly-introduced dead code in changed files. Regenerate the baseline with `bunx fallow dead-code --save-baseline .fallow/dead-code.json` only when an intentional API shape change makes prior baseline stale.
 
+### ESLint MCP
+
+The **`eslint` MCP server** (`@eslint/mcp`, configured in `.mcp.json`) exposes a `lint-files` tool that runs ESLint on given files/globs and returns structured diagnostics (rule id, message, fix range). Use it to:
+
+- Inspect current lint state of a file **before** editing (confirm baseline warnings so new ones are attributable to your change).
+- Audit arbitrary files/globs on demand without triggering an edit (the PostToolUse hook only fires on writes).
+- Debug why a specific rule fires — the JSON output is easier to reason about than parsing `eslint` stdout via Bash.
+
+The PostToolUse hook remains the gate on writes; the MCP is for read-only inspection and ad-hoc audits.
+
 ## CI
 
 - `.github/workflows/fallow.yml` — audits changed files on PRs to `main`.
