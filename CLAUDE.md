@@ -50,10 +50,38 @@ The **`eslint` MCP server** (`@eslint/mcp`, configured in `.mcp.json`) exposes a
 
 The PostToolUse hook remains the gate on writes; the MCP is for read-only inspection and ad-hoc audits.
 
-## CI
+### SocratiCode MCP (MANDATORY)
 
-- `.github/workflows/fallow.yml` — audits changed files on PRs to `main`.
-- `.github/workflows/gitleaks.yml` — secret scan on push + PR to `main`.
-- `.github/workflows/codeql.yml` — `javascript-typescript` with `security-extended,security-and-quality`, plus weekly cron. Findings appear under Security → Code scanning.
+The **`socraticode` MCP server** is the **required** entry point for codebase exploration in this repo. The project is already indexed (`codebase_2c7823a553f2`, 57 files, dependency graph built). **Do not** start with `Glob`/`Grep`/`Read` for exploratory questions — search first, read after narrowing.
 
-There is no lint/typecheck CI workflow yet — the local hook is the only gate on PRs for those.
+**Hard rules:**
+
+- Before answering "where/how/what" questions about existing code, call `mcp__plugin_socraticode_socraticode__codebase_search` first.
+- Before refactoring, renaming, or deleting a symbol, call `mcp__plugin_socraticode_socraticode__codebase_impact` (symbol-level) or `codebase_graph_query` (file-level) to assess blast radius.
+- Before opening a file to "see what it imports", call `codebase_graph_query` instead.
+- Use `Grep` only when you already know the **exact** literal string; use `Read` only after search has narrowed to ≤3 files.
+- If you skip these tools, justify it in the response.
+
+**Tool reference (prefix `mcp__plugin_socraticode_socraticode__`):**
+
+| Bucket | Tool | Use when |
+|--------|------|----------|
+| Search | `codebase_search` | Hybrid semantic + BM25; default first call for any code question |
+| Search | `codebase_status` | Verify index fresh (run after big changes / on new session) |
+| Symbols | `codebase_symbol` | Who calls X, what X calls, where X defined |
+| Symbols | `codebase_symbols` | List symbols in a file or fuzzy-find by name |
+| Impact | `codebase_impact` | Blast radius of changing a function/file before edit |
+| Impact | `codebase_flow` | Trace execution from an entry point (route, main, test) |
+| Graph | `codebase_graph_query` | File-level deps: imports + dependents |
+| Graph | `codebase_graph_circular` | Spot dependency cycles |
+| Graph | `codebase_graph_stats` | Connectivity, orphans, language breakdown |
+| Graph | `codebase_graph_visualize` | Mermaid / interactive HTML graph |
+| Index | `codebase_update` | Incremental re-index after edits (cheap) |
+| Index | `codebase_index` | Full re-index (rare) |
+| Index | `codebase_watch` | Toggle live file watcher |
+| Health | `codebase_health` | Diagnose Docker/Qdrant/Ollama if a tool errors |
+| Context | `codebase_context*` | Schemas / API specs / infra artifacts (if `.socraticodecontextartifacts.json` present) |
+
+**Workflow:** `search` → `graph_query` → `impact`/`symbol` → `Read` (targeted) → edit → `codebase_update`.
+
+If a SocratiCode tool fails, run `codebase_health` and surface the error to the user — do not silently fall back to grep-only exploration.
