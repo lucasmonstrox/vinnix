@@ -14,6 +14,10 @@ export function hasProductId(id: string): boolean {
   return products.some((p) => p.id === id)
 }
 
+export function getProduct(id: string): Product | undefined {
+  return products.find((p) => p.id === id)
+}
+
 export function pushProduct(product: Product): void {
   products.push(product)
 }

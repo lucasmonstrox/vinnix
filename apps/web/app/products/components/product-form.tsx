@@ -3,7 +3,7 @@
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { cn } from "@workspace/ui/lib/utils"
-import { useActionState, useEffect, useRef } from "react"
+import { useActionState } from "react"
 
 import { type AddProductState, addProduct } from "../actions"
 import { ProductField } from "./product-field"
@@ -21,18 +21,9 @@ const TEXTAREA_CLASSES = `
 
 export function ProductForm() {
   const [state, action, pending] = useActionState(addProduct, INITIAL)
-  const formRef = useRef<HTMLFormElement>(null)
-
-  useEffect(() => {
-    if (state.ok) formRef.current?.reset()
-  }, [state])
 
   return (
-    <form
-      ref={formRef}
-      action={action}
-      className="flex max-w-md flex-col gap-3"
-    >
+    <form action={action} className="flex max-w-md flex-col gap-3">
       <ProductField id="id" label="ID">
         <Input id="id" name="id" required />
       </ProductField>

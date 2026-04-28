@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 import type { Product } from "../store"
 
 type ProductListProps = {
@@ -16,16 +18,24 @@ export function ProductList({ products }: ProductListProps) {
   return (
     <ul className="flex flex-col divide-y divide-border rounded-md border">
       {products.map((p) => (
-        <li key={p.id} className="flex flex-col gap-0.5 p-3">
-          <div className="flex items-baseline gap-2">
-            <span className="font-medium">{p.name}</span>
-            <span className="font-mono text-xs text-muted-foreground">
-              #{p.id}
-            </span>
-          </div>
-          {p.description ? (
-            <p className="text-sm text-muted-foreground">{p.description}</p>
-          ) : null}
+        <li key={p.id}>
+          <Link
+            href={`/products/${p.id}`}
+            className="
+              flex flex-col gap-0.5 p-3
+              hover:bg-accent
+            "
+          >
+            <div className="flex items-baseline gap-2">
+              <span className="font-medium">{p.name}</span>
+              <span className="font-mono text-xs text-muted-foreground">
+                #{p.id}
+              </span>
+            </div>
+            {p.description ? (
+              <p className="text-sm text-muted-foreground">{p.description}</p>
+            ) : null}
+          </Link>
         </li>
       ))}
     </ul>
