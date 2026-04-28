@@ -5,7 +5,7 @@ import { Input } from "@workspace/ui/components/input"
 import { cn } from "@workspace/ui/lib/utils"
 import { useActionState, useEffect, useRef } from "react"
 
-import { addProduct, type AddProductState } from "../actions"
+import { type AddProductState, addProduct } from "../actions"
 import { ProductField } from "./product-field"
 import { ProductFormStatus } from "./product-form-status"
 

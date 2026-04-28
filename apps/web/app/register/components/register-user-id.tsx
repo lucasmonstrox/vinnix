@@ -1,4 +1,8 @@
-export function RegisterUserId({ id }: { id: string | undefined }) {
+type RegisterUserIdProps = {
+  id: string | undefined
+}
+
+export function RegisterUserId({ id }: RegisterUserIdProps) {
   if (!id) return null
   return (
     <span className="mt-1 block font-mono text-xs opacity-70">id: {id}</span>

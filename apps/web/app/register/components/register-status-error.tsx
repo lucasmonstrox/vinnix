@@ -5,7 +5,11 @@ const CLASSES = `
   bg-destructive/10 text-destructive
 `
 
-export function RegisterStatusError({ state }: { state: RegisterState }) {
+type RegisterStatusErrorProps = {
+  state: RegisterState
+}
+
+export function RegisterStatusError({ state }: RegisterStatusErrorProps) {
   if (state.status !== "error") return null
   return (
     <p role="alert" className={CLASSES}>

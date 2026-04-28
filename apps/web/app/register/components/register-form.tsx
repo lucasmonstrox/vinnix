@@ -3,7 +3,7 @@
 import { Button } from "@workspace/ui/components/button"
 import { useActionState } from "react"
 
-import { registerAction, type RegisterState } from "../actions"
+import { type RegisterState, registerAction } from "../actions"
 import { RegisterField } from "./register-field"
 import { RegisterStatusError } from "./register-status-error"
 import { RegisterStatusSuccess } from "./register-status-success"

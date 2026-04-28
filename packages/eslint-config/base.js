@@ -73,7 +73,11 @@ export const config = [
       ],
       "perfectionist/sort-named-imports": [
         "error",
-        { type: "alphabetical", order: "asc" },
+        {
+          type: "alphabetical",
+          order: "asc",
+          groups: ["type-import", "unknown"],
+        },
       ],
       "perfectionist/sort-named-exports": [
         "error",

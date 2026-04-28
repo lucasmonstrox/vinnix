@@ -7,7 +7,11 @@ const CLASSES = `
   bg-emerald-500/10 text-emerald-700 dark:text-emerald-300
 `
 
-export function RegisterStatusSuccess({ state }: { state: RegisterState }) {
+type RegisterStatusSuccessProps = {
+  state: RegisterState
+}
+
+export function RegisterStatusSuccess({ state }: RegisterStatusSuccessProps) {
   if (state.status !== "success") return null
   return (
     <p role="status" className={CLASSES}>
