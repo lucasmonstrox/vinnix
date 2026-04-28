@@ -8,10 +8,6 @@
       "command": "bunx",
       "args": ["-y", "@eslint/mcp@latest"]
     },
-    "gitnexus": {
-      "command": "cmd",
-      "args": ["/c", "npx", "-y", "gitnexus@latest", "mcp"]
-    },
     "github": {
       "type": "http",
       "url": "https://api.githubcopilot.com/mcp/",

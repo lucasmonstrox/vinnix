@@ -40,31 +40,6 @@ Turborepo monorepo. `turbo.json` wires `^build`/`^lint`/`^format`/`^typecheck` d
 
 Tailwind v4 stylesheet lives at `packages/ui/src/styles/globals.css` and is referenced from `apps/web`'s PostCSS + Prettier configs.
 
-## Code quality enforcement
-
-The lint config looks permissive because `eslint-plugin-only-warn` demotes every rule to a warning — but the **PostToolUse hook** (`.claude/hooks/lint-file.sh`) runs `eslint --fix` then `eslint --max-warnings 0` on every edited `.ts/.tsx/.js/.jsx/.mjs/.cjs` file. Any remaining warning blocks the write (exit 2) and returns output to the agent. Treat warnings as errors when editing.
-
-Active rules worth knowing before touching code:
-
-- `complexity` max 10 (cyclomatic).
-- `sonarjs/cognitive-complexity` max 15.
-- `@typescript-eslint/max-params` max 2 (Clean Code — use options object for 3+).
-- `no-console` with `allow: ["warn","error"]` — `console.log/info/debug/table` blocked.
-- `eqeqeq: "always"` — always `===`/`!==`.
-- `no-nested-ternary` — refactor nested ternaries into `if/else` or helpers.
-- `no-param-reassign` with `{ props: true }` — no reassign and no property mutation of parameters; spread into a new const.
-- `no-debugger`, `prefer-const`, `no-var` via `@eslint/js` + `typescript-eslint` recommended.
-- Full `sonarjs`, `security`, `security-node`, `no-unsanitized`, `regexp` (`flat/recommended`) sets — `regexp` covers ReDoS (`no-super-linear-backtracking`) and autofixes `prefer-d`/`prefer-w`/`better-regex` silently.
-- `check-file/filename-naming-convention` — all `**/*.{ts,tsx,js,jsx}` must be `KEBAB_CASE`; `ignoreMiddleExtensions: true` allows `.d.ts`, `.stories.tsx`, `.test.ts`, etc.
-- `no-secrets/no-secrets` with `tolerance: 4.2` — blocks high-entropy strings and known provider patterns (AWS, Stripe). GitHub PAT gaps are covered by Gitleaks at commit/CI.
-- `@stylistic/max-len` at 80 — strings/templates/comments count; URLs and regex literals are ignored.
-- `better-tailwindcss/enforce-consistent-line-wrapping` at 80 — auto-fixes long `className="..."` strings by inserting newlines inside the attribute value (JSX treats whitespace as a class separator). Preferred over wrapping in `cn()` for pure Tailwind strings — zero runtime cost and no import.
-- `better-tailwindcss/enforce-consistent-class-order` + `enforce-canonical-classes` enforce Tailwind v4 class ordering and canonical shorthands (e.g. `text-sm leading-loose` → `text-sm/loose`). Settings point `entryPoint` to `packages/ui/src/styles/globals.css` via absolute path.
-- `max-lines-per-function: 60` (blanks and comments skipped).
-- `turbo/no-undeclared-env-vars` — add env vars to `turbo.json` `env`/`globalEnv` before reading from `process.env` in workspace code.
-
-The **Stop hook** (`.claude/hooks/fallow-audit.sh`, async rewake) runs Fallow against `.fallow/dead-code.json` at end of turn and surfaces newly-introduced dead code in changed files. Regenerate the baseline with `bunx fallow dead-code --save-baseline .fallow/dead-code.json` only when an intentional API shape change makes prior baseline stale.
-
 ### ESLint MCP
 
 The **`eslint` MCP server** (`@eslint/mcp`, configured in `.mcp.json`) exposes a `lint-files` tool that runs ESLint on given files/globs and returns structured diagnostics (rule id, message, fix range). Use it to:
@@ -82,55 +57,3 @@ The PostToolUse hook remains the gate on writes; the MCP is for read-only inspec
 - `.github/workflows/codeql.yml` — `javascript-typescript` with `security-extended,security-and-quality`, plus weekly cron. Findings appear under Security → Code scanning.
 
 There is no lint/typecheck CI workflow yet — the local hook is the only gate on PRs for those.
-
-## Prettier conventions
-
-From `.prettierrc`: no semicolons, double quotes, 2-space indent, 80-col print width, `lf` line endings, trailing commas `es5`. `cn` and `cva` are registered as Tailwind functions for class sorting.
-
-## Roadmap
-
-`PLAN.md` (Portuguese) tracks the code-quality roadmap — what's active, what was added in recent sessions, and prioritized proposals (stricter TS, knip, dependency-cruiser, mutation testing, supply-chain scanning). Consult it before proposing tooling changes to avoid duplicating planned work.
-
-<!-- gitnexus:start -->
-# GitNexus — Code Intelligence
-
-This project is indexed by GitNexus as **vinnix** (270 symbols, 331 relationships, 2 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
-
-> If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
-
-## Always Do
-
-- **MUST run impact analysis before editing any symbol.** Before modifying a function, class, or method, run `gitnexus_impact({target: "symbolName", direction: "upstream"})` and report the blast radius (direct callers, affected processes, risk level) to the user.
-- **MUST run `gitnexus_detect_changes()` before committing** to verify your changes only affect expected symbols and execution flows.
-- **MUST warn the user** if impact analysis returns HIGH or CRITICAL risk before proceeding with edits.
-- When exploring unfamiliar code, use `gitnexus_query({query: "concept"})` to find execution flows instead of grepping. It returns process-grouped results ranked by relevance.
-- When you need full context on a specific symbol — callers, callees, which execution flows it participates in — use `gitnexus_context({name: "symbolName"})`.
-
-## Never Do
-
-- NEVER edit a function, class, or method without first running `gitnexus_impact` on it.
-- NEVER ignore HIGH or CRITICAL risk warnings from impact analysis.
-- NEVER rename symbols with find-and-replace — use `gitnexus_rename` which understands the call graph.
-- NEVER commit changes without running `gitnexus_detect_changes()` to check affected scope.
-
-## Resources
-
-| Resource | Use for |
-|----------|---------|
-| `gitnexus://repo/vinnix/context` | Codebase overview, check index freshness |
-| `gitnexus://repo/vinnix/clusters` | All functional areas |
-| `gitnexus://repo/vinnix/processes` | All execution flows |
-| `gitnexus://repo/vinnix/process/{name}` | Step-by-step execution trace |
-
-## CLI
-
-| Task | Read this skill file |
-|------|---------------------|
-| Understand architecture / "How does X work?" | `.claude/skills/gitnexus/gitnexus-exploring/SKILL.md` |
-| Blast radius / "What breaks if I change X?" | `.claude/skills/gitnexus/gitnexus-impact-analysis/SKILL.md` |
-| Trace bugs / "Why is X failing?" | `.claude/skills/gitnexus/gitnexus-debugging/SKILL.md` |
-| Rename / extract / split / refactor | `.claude/skills/gitnexus/gitnexus-refactoring/SKILL.md` |
-| Tools, resources, schema reference | `.claude/skills/gitnexus/gitnexus-guide/SKILL.md` |
-| Index, status, clean, wiki CLI commands | `.claude/skills/gitnexus/gitnexus-cli/SKILL.md` |
-
-<!-- gitnexus:end -->
