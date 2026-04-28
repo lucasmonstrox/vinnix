@@ -41,3 +41,4 @@ npm-debug.log*
 # Fallow — local analysis cache (baselines in .fallow/*.json are committed)
 .fallow/*
 !.fallow/*.json
+.gitnexus
