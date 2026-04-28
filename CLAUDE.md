@@ -56,7 +56,10 @@ The **`socraticode` MCP server** is the **required** entry point for codebase ex
 
 **Hard rules:**
 
-- Before answering "where/how/what" questions about existing code, call `mcp__plugin_socraticode_socraticode__codebase_search` first.
+- Before answering "where/how/what" questions about existing code, pick the right entry tool:
+  - **Concrete/nameable term** (function, type, domain noun like `product`, `auth`) → `codebase_symbols` first — cheaper, returns names + paths only.
+  - **Conceptual question** with no obvious symbol name ("how does the auth flow work") → `codebase_search` (semantic chunks).
+  - Don't run both for the same query unless the first came up empty.
 - Before refactoring, renaming, or deleting a symbol, call `mcp__plugin_socraticode_socraticode__codebase_impact` (symbol-level) or `codebase_graph_query` (file-level) to assess blast radius.
 - Before opening a file to "see what it imports", call `codebase_graph_query` instead.
 - Use `Grep` only when you already know the **exact** literal string; use `Read` only after search has narrowed to ≤3 files.
@@ -66,10 +69,10 @@ The **`socraticode` MCP server** is the **required** entry point for codebase ex
 
 | Bucket | Tool | Use when |
 |--------|------|----------|
-| Search | `codebase_search` | Hybrid semantic + BM25; default first call for any code question |
+| Search | `codebase_search` | Hybrid semantic + BM25; first call for **conceptual** questions without an obvious symbol name |
 | Search | `codebase_status` | Verify index fresh (run after big changes / on new session) |
+| Symbols | `codebase_symbols` | First call for **named** terms (function/type/domain noun) — cheap map of where things live |
 | Symbols | `codebase_symbol` | Who calls X, what X calls, where X defined |
-| Symbols | `codebase_symbols` | List symbols in a file or fuzzy-find by name |
 | Impact | `codebase_impact` | Blast radius of changing a function/file before edit |
 | Impact | `codebase_flow` | Trace execution from an entry point (route, main, test) |
 | Graph | `codebase_graph_query` | File-level deps: imports + dependents |
@@ -82,6 +85,12 @@ The **`socraticode` MCP server** is the **required** entry point for codebase ex
 | Health | `codebase_health` | Diagnose Docker/Qdrant/Ollama if a tool errors |
 | Context | `codebase_context*` | Schemas / API specs / infra artifacts (if `.socraticodecontextartifacts.json` present) |
 
-**Workflow:** `search` → `graph_query` → `impact`/`symbol` → `Read` (targeted) → edit → `codebase_update`.
+**Workflow:** `symbols`/`search` → `graph_query` → `impact`/`symbol` → `Read` (targeted) → edit → `codebase_update`.
+
+**When to `Read` a file after search/symbols:**
+
+- **Read when:** about to edit it; snippet truncated in the relevant zone; file is central per `graph_query` and the question is systemic; snippet calls a helper whose semantics change the answer; file is small (<~50 lines) and clearly nuclear.
+- **Don't read when:** snippet already contains the full symbol; question is "where is X defined"; file is large and you only need one function (use `Read` with `offset`/`limit`, or `codebase_symbol`); question is "what breaks if I change X" (use `codebase_impact`).
+- Tiebreaker: when unsure about ordering / side effects / hidden invariants, prefer to read.
 
 If a SocratiCode tool fails, run `codebase_health` and surface the error to the user — do not silently fall back to grep-only exploration.
