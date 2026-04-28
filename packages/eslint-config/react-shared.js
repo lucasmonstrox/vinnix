@@ -40,6 +40,11 @@ export const reactSharedConfig = [
           message:
             "Extraia props do componente para um type nomeado.",
         },
+        {
+          selector: "ExportNamedDeclaration[source=null][declaration=null]",
+          message:
+            "Use `export` direto na declaração ao invés de `export { ... }` no fim.",
+        },
       ],
     },
   },

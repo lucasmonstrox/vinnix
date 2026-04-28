@@ -27,7 +27,7 @@ function shouldIgnoreHotkey(event: KeyboardEvent) {
   ].some(Boolean)
 }
 
-function ThemeHotkey() {
+export function ThemeHotkey() {
   const { resolvedTheme, setTheme } = useTheme()
 
   React.useEffect(() => {
@@ -48,5 +48,3 @@ function ThemeHotkey() {
 
   return null
 }
-
-export { ThemeHotkey }

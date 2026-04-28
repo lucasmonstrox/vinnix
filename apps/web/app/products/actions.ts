@@ -23,7 +23,6 @@ export async function addProduct(
   if (!id || !name) return { error: "id e nome obrigatórios" }
   if (hasProductId(id)) return { error: "id já existe" }
   pushProduct({ id, name, description })
-
   revalidatePath("/products")
   return { ok: true }
 }

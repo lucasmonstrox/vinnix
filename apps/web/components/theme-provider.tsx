@@ -5,7 +5,7 @@ import * as React from "react"
 
 import { ThemeHotkey } from "@/components/theme-hotkey"
 
-function ThemeProvider({
+export function ThemeProvider({
   children,
   ...props
 }: React.ComponentProps<typeof NextThemesProvider>) {
@@ -22,5 +22,3 @@ function ThemeProvider({
     </NextThemesProvider>
   )
 }
-
-export { ThemeProvider }
