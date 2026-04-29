@@ -17,7 +17,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <header className="flex flex-col gap-1">
         <Link
           href="/products"
-          className="text-xs text-muted-foreground hover:underline"
+          className="
+            text-xs text-muted-foreground
+            hover:underline
+          "
         >
           ← Produtos
         </Link>
